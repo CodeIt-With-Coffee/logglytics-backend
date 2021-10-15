@@ -6,7 +6,6 @@
   "scripts": {
     "start": "node build/index.js",
     "build": "tsc",
-    "postinstall": "yarn build",
     "dev": "NODE_ENV=development nodemon"
   },
   "license": "ISC",

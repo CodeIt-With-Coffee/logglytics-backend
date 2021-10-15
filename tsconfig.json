@@ -1,5 +1,7 @@
 {
   "compilerOptions": {
-    "sourceMap": true
+    "types": ["node"],
+    "outDir": "build",
+    "rootDir": "src"
   }
 }

@@ -20,6 +20,7 @@ type PROJECT = {
   name: string;
   userId: string;
   platform: string;
+  apiKey: string;
 };
 
 type EVENT = {
@@ -31,12 +32,26 @@ type EVENT = {
 
 type LOG = {
   _id: string;
-  type: string;
+  type: LEVEL;
   message: string;
   created: number;
   projectId: string;
 };
 
-type LoggerRequest = { payload: JWTPayload; db: Db } & Request;
+/**
+ * https://sematext.com/blog/logging-levels/
+ */
+enum LEVEL {
+  TRACE = "TRACE",
+  DEBUG = "DEBUG",
+  INFO = "INFO",
+  WARN = "WARN",
+  ERROR = "ERROR",
+  FATAL = "FATAL",
+}
 
-export type { LoggerRequest, JWTData, USER, PROJECT, EVENT, LOG };
+type ApiRequest = { db: Db; projectId: string; apiKey: string } & Request;
+type LoggerRequest = { payload: JWTPayload } & { db: Db } & Request;
+
+export type { LoggerRequest, ApiRequest, JWTData, USER, PROJECT, EVENT, LOG };
+export { LEVEL };

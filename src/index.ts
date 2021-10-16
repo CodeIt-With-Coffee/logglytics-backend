@@ -17,10 +17,10 @@ app.use(connectDB());
 
 const { PORT = 3000 } = process.env;
 
+app.use("/api", apiRoute);
 app.use(extractJWT());
 app.use("/project", projectRoute);
 app.use("/auth", authRoute);
-app.use("/api", apiRoute);
 
 app.get("/", (req: Request, res: Response) => {
   res.send({

@@ -3,6 +3,7 @@ import { formatResponse, valid } from "../utils";
 import { COLLECTION } from "../utils/constants";
 import { LoggerRequest, PROJECT } from "../utils/types";
 import { v4 as uuidv4 } from "uuid";
+import generateApiKey from "generate-api-key";
 
 const router = express.Router();
 
@@ -23,6 +24,29 @@ router.get("/", async (req: LoggerRequest, res: Response) => {
     }))
     .toArray();
   return res.json(formatResponse(true, projects));
+});
+
+router.get("/config/:projectId", async (req: LoggerRequest, res: Response) => {
+  const { projectId } = req.params;
+  const project = await req.db
+    .collection<PROJECT>(COLLECTION.PROJECTS)
+    .findOne({
+      _id: projectId,
+    });
+  if (!project) {
+    return res.json(formatResponse(false, null, "invalid project id provided"));
+  }
+  if (project.userId !== req.payload.data.userId) {
+    return res.json(
+      formatResponse(false, null, "user has no permission to this project")
+    );
+  }
+  return res.json(
+    formatResponse(true, {
+      apiKey: project.apiKey,
+      projectId: project._id,
+    })
+  );
 });
 
 router.get("/:projectId", async (req: LoggerRequest, res: Response) => {
@@ -63,6 +87,10 @@ router.post("/", async (req: LoggerRequest, res: Response) => {
       name,
       userId: req.payload.data.userId,
       platform,
+      apiKey: generateApiKey({
+        length: 64,
+        pool: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._",
+      }),
     });
   return res.json(formatResponse(true, result.insertedId));
 });

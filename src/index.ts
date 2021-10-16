@@ -5,6 +5,7 @@ import { Request, Response } from "express";
 import cors from "cors";
 import projectRoute from "./routes/project";
 import authRoute from "./routes/auth";
+import eventRoute from "./routes/event";
 import apiRoute from "./routes/api";
 import { connectDB, extractJWT, formatResponse } from "./utils";
 import { LoggerRequest } from "./utils/types";
@@ -21,6 +22,7 @@ app.use("/api", apiRoute);
 app.use(extractJWT());
 app.use("/project", projectRoute);
 app.use("/auth", authRoute);
+app.use("/event", eventRoute);
 
 app.get("/", (req: Request, res: Response) => {
   res.send({

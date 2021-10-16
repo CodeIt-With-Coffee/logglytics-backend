@@ -48,6 +48,7 @@ router.use(async (req: ApiRequest, res: Response, next: NextFunction) => {
 router.post("/event", async (req: ApiRequest, res: Response) => {
   const { projectId, apiKey } = req;
   const { key = "DEFAULT" } = req.body;
+	console.log(req.body);
   const event = await req.db.collection<EVENT>(COLLECTION.EVENTS).findOne({
     key,
     projectId,

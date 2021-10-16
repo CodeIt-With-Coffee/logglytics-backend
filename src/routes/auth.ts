@@ -37,7 +37,10 @@ router.post("/", async (req: LoggerRequest, res: Response) => {
       _id: userId,
       emailId,
     });
+  } else if (user.emailId !== emailId) {
+    return res.json(formatResponse(false, null, "wrong email address"));
   }
+
   return res.json(
     formatResponse(
       true,

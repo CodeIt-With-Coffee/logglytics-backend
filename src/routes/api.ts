@@ -48,12 +48,29 @@ router.use(async (req: ApiRequest, res: Response, next: NextFunction) => {
 router.post("/event", async (req: ApiRequest, res: Response) => {
   const { projectId, apiKey } = req;
   const { key = "DEFAULT" } = req.body;
-  const result = await req.db.collection<EVENT>(COLLECTION.EVENTS).insertOne({
-    _id: uuidv4(),
-    created: new Date().getTime(),
+  const event = await req.db.collection<EVENT>(COLLECTION.EVENTS).findOne({
     key,
     projectId,
   });
+  if (event) {
+    await req.db.collection<EVENT>(COLLECTION.EVENTS).findOneAndUpdate(
+      {
+        _id: event._id,
+      },
+      {
+        $set: { updated: new Date().getTime() },
+        $inc: { count: 1 },
+      }
+    );
+  } else {
+    await req.db.collection<EVENT>(COLLECTION.EVENTS).insertOne({
+      _id: uuidv4(),
+      updated: new Date().getTime(),
+      count: 1,
+      key,
+      projectId,
+    });
+  }
   return res.json({
     status: true,
   });

@@ -26,7 +26,8 @@ type PROJECT = {
 type EVENT = {
   _id: string;
   key: string;
-  created: number;
+  updated: number;
+  count: number;
   projectId: string;
 };
 

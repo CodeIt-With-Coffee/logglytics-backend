@@ -37,7 +37,8 @@ router.get("/:projectId", async (req: LoggerRequest, res: Response) => {
     .sort({ created: 1 })
     .map((e) => ({
       key: e.key,
-      created: e.created,
+      upated: e.updated,
+      count: e.count,
       id: e._id,
     }))
     .toArray();

@@ -49,6 +49,7 @@ router.post("/event", async (req: ApiRequest, res: Response) => {
   const { projectId, apiKey } = req;
   const { key = "DEFAULT" } = req.body;
 	console.log(req.body);
+	console.log(key);
   const event = await req.db.collection<EVENT>(COLLECTION.EVENTS).findOne({
     key,
     projectId,
@@ -80,6 +81,8 @@ router.post("/event", async (req: ApiRequest, res: Response) => {
 router.post("/log", async (req: ApiRequest, res: Response) => {
   const { projectId, apiKey } = req;
   const { type = LEVEL.INFO, message = "(EMPTY)" } = req.body;
+	console.log(req.body);
+	console.log(type, message);
   const result = await req.db.collection<LOG>(COLLECTION.LOGS).insertOne({
     _id: uuidv4(),
     created: new Date().getTime(),

@@ -19,6 +19,7 @@ router.get("/", async (req: LoggerRequest, res: Response) => {
     .map((p) => ({
       id: p._id.toString(),
       name: p.name,
+      platform: p.platform,
     }))
     .toArray();
   return res.json(formatResponse(true, projects));
@@ -43,15 +44,16 @@ router.get("/:projectId", async (req: LoggerRequest, res: Response) => {
     formatResponse(true, {
       id: project._id,
       name: project.name,
+      platform: project.platform,
     })
   );
 });
 
 router.post("/", async (req: LoggerRequest, res: Response) => {
-  const { name } = req.body;
-  if (!valid(name)) {
+  const { name, platform } = req.body;
+  if (!valid(name, platform)) {
     return res.json(
-      formatResponse(false, null, "invalid arguments. need => name")
+      formatResponse(false, null, "invalid arguments. need => name, platform")
     );
   }
   const result = await req.db
@@ -60,16 +62,21 @@ router.post("/", async (req: LoggerRequest, res: Response) => {
       _id: uuidv4(),
       name,
       userId: req.payload.data.userId,
+      platform,
     });
   return res.json(formatResponse(true, result.insertedId));
 });
 
 router.put("/:projectId", async (req: LoggerRequest, res: Response) => {
-  const { name } = req.body;
+  const { name, platform } = req.body;
   const { projectId } = req.params;
-  if (!valid(name, projectId)) {
+  if (!valid(name, projectId, platform)) {
     return res.json(
-      formatResponse(false, null, "invalid arguments. need => name, projectId")
+      formatResponse(
+        false,
+        null,
+        "invalid arguments. need => name, projectId, platform"
+      )
     );
   }
   const project = await req.db
@@ -94,6 +101,7 @@ router.put("/:projectId", async (req: LoggerRequest, res: Response) => {
       {
         $set: {
           name,
+          platform,
         },
       }
     );

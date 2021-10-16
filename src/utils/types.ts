@@ -19,6 +19,7 @@ type PROJECT = {
   _id: string;
   name: string;
   userId: string;
+  platform: string;
 };
 
 type EVENT = {

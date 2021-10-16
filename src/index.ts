@@ -5,6 +5,7 @@ import { Request, Response } from "express";
 import cors from "cors";
 import projectRoute from "./routes/project";
 import authRoute from "./routes/auth";
+import apiRoute from "./routes/api";
 import { connectDB, extractJWT, formatResponse } from "./utils";
 import { LoggerRequest } from "./utils/types";
 
@@ -19,6 +20,7 @@ const { PORT = 3000 } = process.env;
 app.use(extractJWT());
 app.use("/project", projectRoute);
 app.use("/auth", authRoute);
+app.use("/api", apiRoute);
 
 app.get("/", (req: Request, res: Response) => {
   res.send({

@@ -7,7 +7,7 @@ const router = express.Router();
 
 router.use((req: LoggerRequest, res: Response, next: NextFunction) => {
   if (req.payload.auth) next();
-  else res.json(formatResponse(false, null, "not authenticated"));
+  else res.status(400).json(formatResponse(false, null, "not authenticated"));
 });
 
 router.get("/:projectId", async (req: LoggerRequest, res: Response) => {
@@ -18,12 +18,16 @@ router.get("/:projectId", async (req: LoggerRequest, res: Response) => {
       _id: projectId,
     });
   if (!project) {
-    return res.json(formatResponse(false, null, "invalid project id provided"));
+    return res
+      .status(400)
+      .json(formatResponse(false, null, "invalid project id provided"));
   }
   if (project.userId !== req.payload.data.userId) {
-    return res.json(
-      formatResponse(false, null, "user has no permission to this project")
-    );
+    return res
+      .status(400)
+      .json(
+        formatResponse(false, null, "user has no permission to this project")
+      );
   }
   const result = await req.db
     .collection<LOG>(COLLECTION.LOGS)

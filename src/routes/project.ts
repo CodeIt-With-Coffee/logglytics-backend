@@ -9,7 +9,7 @@ const router = express.Router();
 
 router.use((req: LoggerRequest, res: Response, next: NextFunction) => {
   if (req.payload.auth) next();
-  else res.json(formatResponse(false, null, "not authenticated"));
+  else res.status(400).json(formatResponse(false, null, "not authenticated"));
 });
 
 router.get("/", async (req: LoggerRequest, res: Response) => {
@@ -34,12 +34,16 @@ router.get("/config/:projectId", async (req: LoggerRequest, res: Response) => {
       _id: projectId,
     });
   if (!project) {
-    return res.json(formatResponse(false, null, "invalid project id provided"));
+    return res
+      .status(400)
+      .json(formatResponse(false, null, "invalid project id provided"));
   }
   if (project.userId !== req.payload.data.userId) {
-    return res.json(
-      formatResponse(false, null, "user has no permission to this project")
-    );
+    return res
+      .status(400)
+      .json(
+        formatResponse(false, null, "user has no permission to this project")
+      );
   }
   return res.json(
     formatResponse(true, {
@@ -57,12 +61,16 @@ router.get("/:projectId", async (req: LoggerRequest, res: Response) => {
       _id: projectId,
     });
   if (!project) {
-    return res.json(formatResponse(false, null, "invalid project id provided"));
+    return res
+      .status(400)
+      .json(formatResponse(false, null, "invalid project id provided"));
   }
   if (project.userId !== req.payload.data.userId) {
-    return res.json(
-      formatResponse(false, null, "user has no permission to this project")
-    );
+    return res
+      .status(400)
+      .json(
+        formatResponse(false, null, "user has no permission to this project")
+      );
   }
   return res.json(
     formatResponse(true, {
@@ -76,9 +84,11 @@ router.get("/:projectId", async (req: LoggerRequest, res: Response) => {
 router.post("/", async (req: LoggerRequest, res: Response) => {
   const { name, platform } = req.body;
   if (!valid(name, platform)) {
-    return res.json(
-      formatResponse(false, null, "invalid arguments. need => name, platform")
-    );
+    return res
+      .status(400)
+      .json(
+        formatResponse(false, null, "invalid arguments. need => name, platform")
+      );
   }
   const result = await req.db
     .collection<PROJECT>(COLLECTION.PROJECTS)
@@ -99,13 +109,15 @@ router.put("/:projectId", async (req: LoggerRequest, res: Response) => {
   const { name, platform } = req.body;
   const { projectId } = req.params;
   if (!valid(name, projectId, platform)) {
-    return res.json(
-      formatResponse(
-        false,
-        null,
-        "invalid arguments. need => name, projectId, platform"
-      )
-    );
+    return res
+      .status(400)
+      .json(
+        formatResponse(
+          false,
+          null,
+          "invalid arguments. need => name, projectId, platform"
+        )
+      );
   }
   const project = await req.db
     .collection<PROJECT>(COLLECTION.PROJECTS)
@@ -113,12 +125,16 @@ router.put("/:projectId", async (req: LoggerRequest, res: Response) => {
       _id: projectId,
     });
   if (!project) {
-    return res.json(formatResponse(false, null, "invalid project id provided"));
+    return res
+      .status(400)
+      .json(formatResponse(false, null, "invalid project id provided"));
   }
   if (req.payload.data.userId !== project.userId) {
-    return res.json(
-      formatResponse(false, null, "user has no permission to this project")
-    );
+    return res
+      .status(400)
+      .json(
+        formatResponse(false, null, "user has no permission to this project")
+      );
   }
   const result = await req.db
     .collection<PROJECT>(COLLECTION.PROJECTS)
@@ -139,9 +155,11 @@ router.put("/:projectId", async (req: LoggerRequest, res: Response) => {
 router.delete("/:projectId", async (req: LoggerRequest, res: Response) => {
   const { projectId } = req.params;
   if (!valid(projectId)) {
-    return res.json(
-      formatResponse(false, null, "invalid arguments. need => projectId")
-    );
+    return res
+      .status(400)
+      .json(
+        formatResponse(false, null, "invalid arguments. need => projectId")
+      );
   }
   const project = await req.db
     .collection<PROJECT>(COLLECTION.PROJECTS)
@@ -149,12 +167,16 @@ router.delete("/:projectId", async (req: LoggerRequest, res: Response) => {
       _id: projectId,
     });
   if (!project) {
-    return res.json(formatResponse(false, null, "invalid project id provided"));
+    return res
+      .status(400)
+      .json(formatResponse(false, null, "invalid project id provided"));
   }
   if (req.payload.data.userId !== project.userId) {
-    return res.json(
-      formatResponse(false, null, "user has no permission to this project")
-    );
+    return res
+      .status(400)
+      .json(
+        formatResponse(false, null, "user has no permission to this project")
+      );
   }
   const result = await req.db
     .collection<PROJECT>(COLLECTION.PROJECTS)

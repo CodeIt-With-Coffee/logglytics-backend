@@ -1,5 +1,4 @@
 import express, { NextFunction, Response } from "express";
-import { ObjectId } from "mongodb";
 import { formatResponse, gen, valid } from "../utils";
 import { COLLECTION } from "../utils/constants";
 import { LoggerRequest, USER } from "../utils/types";
@@ -8,12 +7,14 @@ const router = express.Router();
 
 router.get("/", async (req: LoggerRequest, res: Response) => {
   if (!req.payload.auth)
-    return res.json(formatResponse(false, null, "not authenticated"));
+    return res
+      .status(400)
+      .json(formatResponse(false, null, "not authenticated"));
   const user = await req.db.collection<USER>(COLLECTION.USERS).findOne({
     _id: req.payload.data.userId,
   });
   if (!user) {
-    return res.json(formatResponse(false, null, "invalid user"));
+    return res.status(400).json(formatResponse(false, null, "invalid user"));
   }
   return res.json(
     formatResponse(true, {
@@ -25,9 +26,15 @@ router.get("/", async (req: LoggerRequest, res: Response) => {
 router.post("/", async (req: LoggerRequest, res: Response) => {
   const { userId, emailId } = req.body;
   if (!valid(userId, emailId)) {
-    return res.json(
-      formatResponse(false, null, "invalid arguments. need => userId, emailId")
-    );
+    return res
+      .status(400)
+      .json(
+        formatResponse(
+          false,
+          null,
+          "invalid arguments. need => userId, emailId"
+        )
+      );
   }
   const user = await req.db.collection<USER>(COLLECTION.USERS).findOne({
     _id: userId,
@@ -38,7 +45,9 @@ router.post("/", async (req: LoggerRequest, res: Response) => {
       emailId,
     });
   } else if (user.emailId !== emailId) {
-    return res.json(formatResponse(false, null, "wrong email address"));
+    return res
+      .status(400)
+      .json(formatResponse(false, null, "wrong email address"));
   }
 
   return res.json(

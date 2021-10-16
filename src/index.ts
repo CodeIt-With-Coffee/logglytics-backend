@@ -6,6 +6,7 @@ import cors from "cors";
 import projectRoute from "./routes/project";
 import authRoute from "./routes/auth";
 import eventRoute from "./routes/event";
+import logRoute from "./routes/log";
 import apiRoute from "./routes/api";
 import { connectDB, extractJWT, formatResponse } from "./utils";
 import { LoggerRequest } from "./utils/types";
@@ -23,7 +24,7 @@ app.use(extractJWT());
 app.use("/project", projectRoute);
 app.use("/auth", authRoute);
 app.use("/event", eventRoute);
-
+app.use("/log", logRoute);
 app.get("/", (req: Request, res: Response) => {
   res.send({
     message: "hello world",
